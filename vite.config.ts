@@ -2,11 +2,12 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
 // https://vitejs.dev/config/
-// Pour GitHub Pages: base = '/nom-du-repo/'
-// Pour production locale: base = '/'
+// With custom domain: base = '/'
+// Without custom domain (default GitHub Pages): base = '/nom-du-repo/'
+// For local development: base = '/'
 export default defineConfig({
   plugins: [react()],
-  base: process.env.GITHUB_PAGES === 'true' 
-    ? `/${process.env.GITHUB_REPOSITORY?.split('/')[1] || 'transaction-flow-calculator'}/`
-    : '/',
+  base: process.env.CUSTOM_DOMAIN === 'true' || process.env.GITHUB_PAGES !== 'true'
+    ? '/'
+    : `/${process.env.GITHUB_REPOSITORY?.split('/')[1] || 'transaction-flow-calculator'}/`,
 });

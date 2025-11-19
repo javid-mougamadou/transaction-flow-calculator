@@ -6,7 +6,7 @@ WORKDIR /app
 ENV NODE_ENV=development
 
 COPY package*.json ./
-RUN npm install
+RUN npm install --force || (npm install --no-audit --no-fund && npm install --force)
 
 COPY . .
 
@@ -18,7 +18,7 @@ FROM node:20-alpine AS build
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm install
+RUN npm install --force || (npm install --no-audit --no-fund && npm install --force)
 
 COPY . .
 RUN npm run build

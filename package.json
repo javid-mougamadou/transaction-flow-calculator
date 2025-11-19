@@ -10,6 +10,8 @@
     "preview": "vite preview",
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
     "test": "vitest",
+    "test:ci": "vitest --run --reporter=verbose",
+    "install:fix": "npm install --force",
     "tunnel": "lt --port 5173 --print-requests",
     "tunnel:cloudflare": "cloudflared tunnel run transaction-flow-calculator"
   },
@@ -37,6 +39,7 @@
     "jsdom": "27.1.0",
     "postcss": "8.4.39",
     "prettier": "3.3.2",
+    "rollup": "4.13.0",
     "tailwindcss": "3.4.4",
     "typescript": "5.4.5",
     "vite": "5.2.0",

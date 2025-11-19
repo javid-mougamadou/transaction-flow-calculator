@@ -13,7 +13,7 @@ services:
       - "5173:5173"
     environment:
       - NODE_ENV=development
-    command: sh -c "npm install && tail -f /dev/null"
+    command: sh -c "npm install --force || (npm install --no-audit --no-fund && npm install --force) && tail -f /dev/null"
     stdin_open: true
     tty: true
 
