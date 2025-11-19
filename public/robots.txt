@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://transaction-flow-calculator.javid-space.cloud/sitemap.xml
