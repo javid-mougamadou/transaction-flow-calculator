@@ -6,6 +6,8 @@ on:
       - main
       - master
   workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *'
 
 # Permissions pour GitHub Pages
 permissions:
@@ -19,6 +21,28 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  lint:
+    name: Lint Code
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          npm ci || npm install
+          # Ensure optional dependencies are installed (fix for Rollup native modules)
+          npm install --no-audit --no-fund --force
+
+      - name: Run ESLint
+        run: npm run lint
+
   test:
     name: Run Tests
     runs-on: ubuntu-latest
@@ -43,7 +67,8 @@ jobs:
 
   build:
     name: Build
-    needs: test
+    needs: [test]
+    # needs: [test, lint]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
