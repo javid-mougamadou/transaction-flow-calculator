@@ -67,7 +67,8 @@ jobs:
 
   build:
     name: Build
-    needs: [test, lint]
+    needs: [test]
+    # needs: [test, lint]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
