@@ -7,13 +7,13 @@ on:
       - master
   workflow_dispatch:
 
-# Permissions pour GitHub Pages
+# Permissions for GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# Autoriser un seul déploiement à la fois
+# Allow only one deployment at a time
 concurrency:
   group: "pages"
   cancel-in-progress: false
@@ -39,7 +39,7 @@ jobs:
           npm install --no-audit --no-fund --force
 
       - name: Run Vitest tests
-        run: npm test -- --run --reporter=verbose
+        run: npm run test:ci
 
   build:
     name: Build
@@ -89,4 +89,3 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-

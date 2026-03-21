@@ -25,6 +25,10 @@ export type ReportEntry = {
   date: string;
   createdAt: string;
   transfers: SimplifiedTransfer[];
+  /** Snapshot des virements saisis au moment de la validation (absent sur les anciens reportings). */
+  enteredTransactions?: Transaction[];
+  /** Snapshot des virements regroupés au moment de la validation (absent sur les anciens reportings). */
+  groupedTransfers?: SimplifiedTransfer[];
 };
 
 export type ValueEvent = {

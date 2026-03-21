@@ -66,29 +66,90 @@ export const ReportsSection = ({ reports, onRemove }: ReportsSectionProps) => {
                   className="collapse-content text-sm text-base-content/90"
                   onClick={(event) => event.stopPropagation()}
                 >
-                  <ul className="space-y-2">
-                    {report.transfers.map((transfer) => (
-                      <li
-                        key={`${report.id}-${transfer.from}->${transfer.to}`}
-                        className="flex items-center justify-between rounded-lg border border-base-300 bg-base-200 px-3 py-2"
-                      >
-                        <span>
-                          {transfer.from} → {transfer.to}
+                  {report.enteredTransactions && report.enteredTransactions.length > 0 ? (
+                    <div className="mb-6">
+                      <div className="mb-2 flex items-center justify-between">
+                        <h3 className="text-base font-semibold text-base-content">Virements saisis</h3>
+                        <span className="badge badge-primary badge-outline text-xs">
+                          {report.enteredTransactions.length}
                         </span>
-                        <span className="font-semibold text-warning">
-                          {formatAmount(transfer.amount)}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                  {report.transfers.length > 0 && (
-                    <div className="mt-3 flex items-center justify-between rounded-lg border-2 border-warning bg-base-200 px-3 py-2 font-semibold text-base-content">
-                      <span>Total</span>
-                      <span className="text-warning">
-                        {formatAmount(report.transfers.reduce((sum, transfer) => sum + transfer.amount, 0))}
-                      </span>
+                      </div>
+                      <ul className="space-y-2">
+                        {report.enteredTransactions.map((transaction, index) => (
+                          <li
+                            key={transaction.id}
+                            className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-base-300 bg-base-200 px-3 py-2"
+                          >
+                            <div className="flex flex-col gap-0.5">
+                              <span className="font-medium text-base-content">
+                                #{index + 1} {transaction.from} → {transaction.to}
+                              </span>
+                              {transaction.label ? (
+                                <span className="text-xs italic text-base-content/60">{transaction.label}</span>
+                              ) : null}
+                            </div>
+                            <span className="font-semibold text-success">{formatAmount(transaction.amount)}</span>
+                          </li>
+                        ))}
+                      </ul>
                     </div>
-                  )}
+                  ) : null}
+
+                  {report.groupedTransfers && report.groupedTransfers.length > 0 ? (
+                    <div className="mb-6">
+                      <h3 className="mb-2 text-base font-semibold text-base-content">Virements regroupés</h3>
+                      <ul className="space-y-2">
+                        {report.groupedTransfers.map((transfer) => (
+                          <li
+                            key={`${report.id}-grp-${transfer.from}->${transfer.to}`}
+                            className="flex items-center justify-between rounded-lg border border-base-300 bg-base-200 px-3 py-2"
+                          >
+                            <span>
+                              {transfer.from} → {transfer.to}
+                            </span>
+                            <span className="font-semibold text-info">{formatAmount(transfer.amount)}</span>
+                          </li>
+                        ))}
+                      </ul>
+                      <div className="mt-2 flex items-center justify-between rounded-lg border-2 border-info bg-base-200 px-3 py-2 font-semibold text-base-content">
+                        <span>Total</span>
+                        <span className="text-info">
+                          {formatAmount(
+                            report.groupedTransfers.reduce((sum, transfer) => sum + transfer.amount, 0),
+                          )}
+                        </span>
+                      </div>
+                    </div>
+                  ) : null}
+
+                  <div>
+                    {report.enteredTransactions?.length || report.groupedTransfers?.length ? (
+                      <h3 className="mb-2 text-base font-semibold text-base-content">Résumé simplifié</h3>
+                    ) : null}
+                    <ul className="space-y-2">
+                      {report.transfers.map((transfer) => (
+                        <li
+                          key={`${report.id}-${transfer.from}->${transfer.to}`}
+                          className="flex items-center justify-between rounded-lg border border-base-300 bg-base-200 px-3 py-2"
+                        >
+                          <span>
+                            {transfer.from} → {transfer.to}
+                          </span>
+                          <span className="font-semibold text-warning">
+                            {formatAmount(transfer.amount)}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                    {report.transfers.length > 0 && (
+                      <div className="mt-3 flex items-center justify-between rounded-lg border-2 border-warning bg-base-200 px-3 py-2 font-semibold text-base-content">
+                        <span>Total</span>
+                        <span className="text-warning">
+                          {formatAmount(report.transfers.reduce((sum, transfer) => sum + transfer.amount, 0))}
+                        </span>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             );

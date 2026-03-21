@@ -219,6 +219,8 @@ const App = () => {
       date: reportDate,
       createdAt: new Date().toISOString(),
       transfers: simplifiedTransfers.map((transfer) => ({ ...transfer })),
+      enteredTransactions: transactions.map((t) => ({ ...t })),
+      groupedTransfers: groupedTransactions.map((g) => ({ ...g })),
     };
 
     setReports((prevReports: ReportEntry[]) => [entry, ...prevReports]);
