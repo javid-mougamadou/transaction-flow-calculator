@@ -10,6 +10,8 @@ describe('SummarySection', () => {
         simplifiedTransfers={[]}
         reportDate=""
         onReportDateChange={vi.fn()}
+        reportName=""
+        onReportNameChange={vi.fn()}
         onValidate={vi.fn()}
         reportError={null}
       />,
@@ -27,6 +29,8 @@ describe('SummarySection', () => {
         simplifiedTransfers={[{ from: 'Compte A', to: 'Compte B', amount: 100 }]}
         reportDate="2024-01-01"
         onReportDateChange={vi.fn()}
+        reportName=""
+        onReportNameChange={vi.fn()}
         onValidate={onValidate}
         reportError={null}
       />,

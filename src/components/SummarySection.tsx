@@ -6,6 +6,8 @@ type SummarySectionProps = {
   simplifiedTransfers: SimplifiedTransfer[];
   reportDate: string;
   onReportDateChange: (event: ValueEvent) => void;
+  reportName: string;
+  onReportNameChange: (event: ValueEvent) => void;
   onValidate: () => void;
   reportError: string | null;
 };
@@ -15,6 +17,8 @@ export const SummarySection = ({
   simplifiedTransfers,
   reportDate,
   onReportDateChange,
+  reportName,
+  onReportNameChange,
   onValidate,
   reportError,
 }: SummarySectionProps) => (
@@ -31,6 +35,18 @@ export const SummarySection = ({
           value={reportDate}
           max={new Date().toISOString().split('T')[0]}
           onChange={onReportDateChange}
+        />
+      </label>
+      <label className="form-control w-full md:w-64">
+        <div className="label">
+          <span className="label-text text-base-content/70">Nom du reporting (optionnel)</span>
+        </div>
+        <input
+          type="text"
+          className="input input-bordered w-full"
+          placeholder="Ex : Semaine 15"
+          value={reportName}
+          onChange={onReportNameChange}
         />
       </label>
       <button

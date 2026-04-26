@@ -55,6 +55,10 @@ const App = () => {
     key: 'fluxcalc.reportDate-v1',
     defaultValue: new Date().toISOString().split('T')[0],
   });
+  const [reportName, setReportName] = usePersistentState<string>({
+    key: 'fluxcalc.reportName-v1',
+    defaultValue: '',
+  });
   const [reportError, setReportError] = useState<string | null>(null);
   const [theme, setTheme] = usePersistentState<'light' | 'dark'>({
     key: 'fluxcalc.theme-v1',
@@ -206,12 +210,13 @@ const App = () => {
       return;
     }
 
-    const label = new Intl.DateTimeFormat('fr-FR', {
+    const dateLabel = new Intl.DateTimeFormat('fr-FR', {
       weekday: 'long',
       day: '2-digit',
       month: 'long',
       year: 'numeric',
     }).format(new Date(reportDate));
+    const label = reportName.trim() || dateLabel;
 
     const entry: ReportEntry = {
       id: generateId(),
@@ -226,6 +231,7 @@ const App = () => {
     setReports((prevReports: ReportEntry[]) => [entry, ...prevReports]);
     setReportError(null);
     setReportDate('');
+    setReportName('');
 
     // Track summary validation
     trackEvent('summary_validated', {
@@ -233,6 +239,18 @@ const App = () => {
       transfers_count: simplifiedTransfers.length,
       total_reports: reports.length + 1,
     });
+  };
+
+  const handleEditReport = (report: ReportEntry) => {
+    const restoredTransactions = report.enteredTransactions ?? [];
+    const accountSet = new Set<string>();
+    for (const t of restoredTransactions) {
+      accountSet.add(t.from);
+      accountSet.add(t.to);
+    }
+    setTransactions(restoredTransactions);
+    setAccounts([...accountSet]);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleRemoveReport = (id: string) => {
@@ -253,6 +271,10 @@ const App = () => {
   const handleReportDateChange = (event: ValueEvent) => {
     setReportDate(event.target.value);
     setReportError(null);
+  };
+
+  const handleReportNameChange = (event: ValueEvent) => {
+    setReportName(event.target.value);
   };
 
   const handleResetAll = () => {
@@ -323,11 +345,13 @@ const App = () => {
           simplifiedTransfers={simplifiedTransfers}
           reportDate={reportDate}
           onReportDateChange={handleReportDateChange}
+          reportName={reportName}
+          onReportNameChange={handleReportNameChange}
           onValidate={handleValidateSummary}
           reportError={reportError}
         />
 
-        <ReportsSection reports={reports} onRemove={handleRemoveReport} />
+        <ReportsSection reports={reports} onRemove={handleRemoveReport} onEdit={handleEditReport} />
       </section>
       <AppFooter />
     </main>

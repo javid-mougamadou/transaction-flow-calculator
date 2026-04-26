@@ -4,7 +4,7 @@ import { ReportsSection } from '../ReportsSection';
 
 describe('ReportsSection', () => {
   it("affiche un message lorsqu'il n'y a pas de reports", () => {
-    render(<ReportsSection reports={[]} onRemove={vi.fn()} />);
+    render(<ReportsSection reports={[]} onRemove={vi.fn()} onEdit={vi.fn()} />);
 
     expect(
       screen.getByText('Validez un résumé pour constituer un historique des flux simplifiés.'),
@@ -25,6 +25,7 @@ describe('ReportsSection', () => {
           },
         ]}
         onRemove={onRemove}
+        onEdit={vi.fn()}
       />,
     );
 
@@ -53,6 +54,7 @@ describe('ReportsSection', () => {
           },
         ]}
         onRemove={vi.fn()}
+        onEdit={vi.fn()}
       />,
     );
 

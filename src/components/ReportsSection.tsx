@@ -5,9 +5,63 @@ import { ClickEvent, ReportEntry } from '../types';
 type ReportsSectionProps = {
   reports: ReportEntry[];
   onRemove: (id: string) => void;
+  onEdit: (report: ReportEntry) => void;
 };
 
-export const ReportsSection = ({ reports, onRemove }: ReportsSectionProps) => {
+const exportReportToCsv = (report: ReportEntry) => {
+  const sep = ';';
+  const lines: string[] = [];
+
+  const createdLabel = new Intl.DateTimeFormat('fr-FR', {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  }).format(new Date(report.createdAt));
+
+  lines.push(`Report du ${report.label}`);
+  lines.push(`Saisi le ${createdLabel}`);
+  lines.push('');
+
+  if (report.enteredTransactions && report.enteredTransactions.length > 0) {
+    lines.push('Virements saisis');
+    lines.push(['De', 'Vers', 'Montant', 'Libellé'].join(sep));
+    for (const t of report.enteredTransactions) {
+      lines.push([t.from, t.to, t.amount, t.label ?? ''].join(sep));
+    }
+    lines.push('');
+  }
+
+  if (report.groupedTransfers && report.groupedTransfers.length > 0) {
+    lines.push('Virements regroupés');
+    lines.push(['De', 'Vers', 'Montant'].join(sep));
+    for (const t of report.groupedTransfers) {
+      lines.push([t.from, t.to, t.amount].join(sep));
+    }
+    const total = report.groupedTransfers.reduce((s, t) => s + t.amount, 0);
+    lines.push(['Total', '', total].join(sep));
+    lines.push('');
+  }
+
+  if (report.transfers.length > 0) {
+    lines.push('Résumé simplifié');
+    lines.push(['De', 'Vers', 'Montant'].join(sep));
+    for (const t of report.transfers) {
+      lines.push([t.from, t.to, t.amount].join(sep));
+    }
+    const total = report.transfers.reduce((s, t) => s + t.amount, 0);
+    lines.push(['Total', '', total].join(sep));
+  }
+
+  const bom = '\uFEFF';
+  const blob = new Blob([bom + lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `report-${report.date}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+};
+
+export const ReportsSection = ({ reports, onRemove, onEdit }: ReportsSectionProps) => {
   const [openId, setOpenId] = useState<string | null>(null);
 
   const toggle = (id: string) => {
@@ -50,17 +104,41 @@ export const ReportsSection = ({ reports, onRemove }: ReportsSectionProps) => {
                     </span>
                     <span className="text-xs text-base-content/70">Saisi le {createdLabel}</span>
                   </div>
-                  <button
-                    type="button"
-                    className="btn btn-outline btn-error btn-sm"
-                    onClick={(event: ClickEvent) => {
-                      event.preventDefault();
-                      event.stopPropagation();
-                      onRemove(report.id);
-                    }}
-                  >
-                    Retirer
-                  </button>
+                  <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
+                    <button
+                      type="button"
+                      className="btn btn-outline btn-info btn-sm"
+                      onClick={(event: ClickEvent) => {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        exportReportToCsv(report);
+                      }}
+                    >
+                      Exporter CSV
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-outline btn-warning btn-sm"
+                      onClick={(event: ClickEvent) => {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        onEdit(report);
+                      }}
+                    >
+                      Modifier
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-outline btn-error btn-sm"
+                      onClick={(event: ClickEvent) => {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        onRemove(report.id);
+                      }}
+                    >
+                      Retirer
+                    </button>
+                  </div>
                 </div>
                 <div
                   className="collapse-content text-sm text-base-content/90"
